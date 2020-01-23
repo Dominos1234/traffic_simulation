@@ -2,6 +2,7 @@ import tkinter as tk
 import time
 import threading
 import math
+import socket
 
 CARS_LR = 0
 CARS_UD = 0
@@ -164,37 +165,30 @@ def move_right_left():
 def thread1():
     global CARS_LR, CARS_UD, RED_LR, YELLOW_LR, GREEN_LR, RED_UD, YELLOW_UD, GREEN_UD
 
-
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect(('127.0.0.1', 1234))
 
     while True:
 
-        time.sleep(10)
-        CARS_UD = 6
-        CARS_LR = 4
-        RED_UD=0
-        RED_LR = 1
-        GREEN_LR = 0
-        GREEN_UD=1
+        msg = sock.recv(1024)
+        msg = msg.decode("utf-8")
+        # read_message(msg)
 
+        # time.sleep(10)
+        # CARS_UD = 6
+        # CARS_LR = 4
+        # RED_UD=0
+        # RED_LR = 1
+        # GREEN_LR = 0
+        # GREEN_UD=1
 
-
-        time.sleep(10)
-        CARS_UD = 10
-        CARS_LR = 12
-        RED_UD = 1
-        RED_LR = 0
-        GREEN_UD = 0
-        GREEN_LR = 1
-
-
-
-
-
-def read_data():
-    #socket
-    #msg = read_message
-
-    return
+        # time.sleep(10)
+        # CARS_UD = 10
+        # CARS_LR = 12
+        # RED_UD = 1
+        # RED_LR = 0
+        # GREEN_UD = 0
+        # GREEN_LR = 1
 
 
 def prepare_rl():
@@ -280,6 +274,29 @@ def main():
             GREEN_LR = 0
 
         root.update()
+
+
+def read_message(msg):
+    global CARS_LR, CARS_UD, GREEN_LR, GREEN_UD, YELLOW_LR, YELLOW_UD, RED_LR, RED_UD
+    if msg[0] == '#':
+        if msg[1] == 1:
+            if msg[2] == 1: RED_UD = 1
+            else: RED_UD = 0
+            if msg[3] == 1: YELLOW_UD = 1
+            else: YELLOW_UD = 0
+            if msg[4] == 1: GREEN_UD = 1
+            else: GREEN_UD = 0
+            if msg[5] == 1: RED_LR = 1
+            else: RED_LR = 0
+            if msg[6] == 1: YELLOW_LR = 1
+            else: YELLOW_LR = 0
+            if msg[7] == 1: GREEN_LR = 1
+            else: GREEN_LR = 0
+        if msg[1] == 2:
+            if RED_LR == 1:
+                CARS_LR +=1
+            if RED_UD == 1:
+                CARS_UD +=1
 
 
 
